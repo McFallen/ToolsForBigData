@@ -1,6 +1,7 @@
 import json
 import re
 from sklearn import ensemble, metrics
+from sklearn.feature_extraction import FeatureHasher
 from sklearn.feature_extraction.text import HashingVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 
@@ -28,8 +29,8 @@ def bag_of_words(articles):
 def bag_of_words_feature_hash(articles):
     bodies = map(lambda x: (x['body']), articles)
     earns = map(lambda x: 1 if 'earn' in x['topics'] else 0, articles)
-    bow = HashingVectorizer(n_features=1000)
-    return (earns, bow.fit_transform(bodies).toarray())
+    feature_hashes = FeatureHasher(n_features=1000, input_type='string')
+    return (earns, feature_hashes.fit_transform(bodies).toarray())
 
 def tree_estimator(bow, train=0.8):
     clf = ensemble.RandomForestClassifier(n_estimators=50)
@@ -50,12 +51,14 @@ def tree_estimator(bow, train=0.8):
     return score
 
 if __name__ == "__main__":
-    all_articles = valid_articles(10)
+    all_articles = valid_articles(22)
 
     print "Amount of valid articals:", len(all_articles)
 
-    bow = bag_of_words(all_articles[:5000])
-    print tree_estimator(bow)
+    bow = bag_of_words(all_articles)
+    print "Amount of words:", len(bow[1][0])
+    print "Regular BOW 'earn'-classification score:", tree_estimator(bow)
 
+    all_articles = valid_articles(22)
     feat_hash = bag_of_words_feature_hash(all_articles)
-    print tree_estimator(feat_hash)
+    print "Feature Hashing 'earn'-classification score:", tree_estimator(feat_hash)

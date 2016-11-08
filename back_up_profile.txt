@@ -1,0 +1,134 @@
+alias get="sudo apt-get"
+alias install="get install"
+alias update="get update"
+alias upgrade="sudo apt-get -y upgrade"
+alias ll="ls -l"
+alias lah="ls -lah"
+alias ..="cd .."
+alias pdf="xdg-open"
+
+alias quick-test="cd ~/quantads-reports; phpunit --colors --exclude-group long -c protected/test/PHPUnit/db_an.xml protected/test/PHPUnit/Unit/"
+alias long-test="cd ~/quantads-reports; phpunit --colors --group long -c protected/test/PHPUnit/db_an.xml protected/test/PHPUnit/Unit/"
+alias here-test="phpunit --colors -c ~/quantads-reports/protected/test/PHPUnit/db_an.xml ."
+alias full-test="cd ~/quantads-reports; phpunit --log-json "../Desktop/test_result.json" --colors -c protected/test/PHPUnit/db_an.xml protected/test/PHPUnit/Unit/"
+alias long-test="cd ~/quantads-reports; phpunit --colors -c protected/test/PHPUnit/db_an.xml --exclude-group extremelong protected/test/PHPUnit/Unit/"
+alias jenkins-test="cd ~/quantads-reports; phpunit --colors --exclude-group extremelong -c protected/test/PHPUnit/db_ak.xml protected/test/PHPUnit/Unit/"
+alias current-test="cd ~/quantads-reports; phpunit --colors -c protected/test/PHPUnit/db_an.xml --group current protected/test/PHPUnit/Unit/"
+alias current-test-coverage="cdq; phpunit -c protected/test/PHPUnit/db_an.xml --log-junit 'protected/build/logs/unitreport.xml' --coverage-html 'protected/build/coverage' --coverage-clover 'protected/build/coverage/coverage.xml' --group current protected/test/PHPUnit/Unit/"
+alias quick-test-file="quick-test > ~/quantads-reports/protected/test/PHPUnit/test_results.log"
+alias checkout='git checkout '
+alias checkdev='git checkout development'
+alias s='git status'
+alias push='git push '
+alias pull='git pull '
+alias a='git add '
+alias d='git diff '
+alias dc='git diff --cached'
+alias switch='git checkout '
+alias c='git commit -m '
+alias st='git stash save '
+alias ch='git checkout '
+alias pp='pull && push '
+alias sl='git stash list'
+alias hotfixy='git checkout master; git pull; git merge hotfix ; git checkout development ; git pull; git merge hotfix; git checkout master; pp;'
+alias masterfy='pp; git checkout release; git pull; git merge development; git push origin release; git checkout master; git merge release; pp'
+alias bv='git branch -v'
+
+#export WORKER_IP="ec2-54-77-87-222.eu-west-1.compute.amazonaws.com"
+export WEB_IP="ec2-52-30-198-27.eu-west-1.compute.amazonaws.com"
+export BEAN_STALK_SECRET="/home/mcfallen/.ssh/php-beanstalk-ec2.pem"
+export JENKINS_SECRET="/home/mcfallen/.ssh/quantads-jenkins-key.pem"
+export JENKINS_IP="ec2-54-72-224-169.eu-west-1.compute.amazonaws.com"
+
+alias jenkins-server="ssh -i $JENKINS_SECRET ubuntu@$JENKINS_IP"
+#alias aws-worker="ssh -i $BEAN_STALK_SECRET ec2-user@$WORKER_IP"
+alias aws-web="ssh -i $BEAN_STALK_SECRET ec2-user@$WEB_IP"
+
+export TOOLSFORBIGDATA_IP="ec2-54-213-136-217.us-west-2.compute.amazonaws.com"
+export EC_SECRET="/home/mcfallen/.ssh/toolsforbigdata.pem"
+alias tfbd-server="ssh -i $EC_SECRET ubuntu@$TOOLSFORBIGDATA_IP"
+
+# Stuff for bidengine (python env)
+#export PATH="$HOME/.pyenv/bin:$PATH"
+#eval "$(pyenv init -)"
+#eval "$(pyenv virtualenv-init -)"
+
+# Deploying to EC2
+alias deploy-aws="cd ~/reports; eb use quantads-php-web; eb deploy;"
+
+get-web-file() {
+
+        scp -i "$BEAN_STALK_SECRET" ec2-user@$WEB_IP:$@ .
+
+}
+
+
+
+upload-web-file() {
+
+        scp -i "$BEAN_STALK_SECRET" $@ ec2-user@$WEB_IP:/tmp/$@
+
+}
+
+
+
+
+
+
+alias cdq='cd ~/reports'
+alias cdd='cd ~/quantads-data'
+alias cdc='cd ~/quantads-composer'
+alias baseup='cd ~/baseup'
+alias downloads='cd ~/Downloads'
+alias desktop='cd ~/Desktop'
+#Used for profile setting (This file)
+alias reload='source ~/.bashrc'
+alias profile='nano ~/.bashrc; reload'
+
+# Stuff for powering off etc
+alias poweroff='sudo /sbin/poweroff'
+alias shutdown='sudo /sbin/poweroff'
+alias reboot='sudo /sbin/reboot'
+alias halt='sudo /sbin/halt'
+
+# Shortcut to run mosml with rlwrap (to get terminal history)
+alias mosml='rlwrap mosml -P full'
+
+#Opens shit from cmd in sublime
+si () {
+        "$@" > $$.txt
+        subl $$.txt
+        sleep 2
+        rm $$.txt
+
+}
+
+#Kills every process containing given argument
+blow() {
+        if [ -z "$1" ]
+        then
+            echo "You crazy dawg?!"
+            return
+        fi
+
+        if [ "$2" = "y" ]
+        then
+                ps axf | grep "$1" | grep -v grep | awk '{print "kill -9 " $1}' | sh
+        else
+                ps axf | grep "$1" | grep -v grep | awk '{print "kill -9 " $1}'
+        fi
+}
+
+#Give Ayoub the giggles
+fc () {
+
+        git commit -m "`wget http://www.whatthecommit.com/ -q -O - | grep "<p>" | sed  's/<p>//'`"
+
+}
+
+# Downloading stuff easier
+wger() {
+	wget "$@"
+}
+
+source ~/.bash_profile
